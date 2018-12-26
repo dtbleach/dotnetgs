@@ -13,10 +13,13 @@ namespace gs.Model
         [Key]
         public int id { get; set; }
 
+        [Column("ip")]
         public string ip { get; set; }
 
-        public string gz { get; set; }
+        [Column("gz")]
+        public decimal gz { get; set; }
 
+        [Column("bs")]
         public string bs { get; set; }
     }
 }

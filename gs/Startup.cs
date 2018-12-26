@@ -17,6 +17,7 @@ namespace gs
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
         }
 
         public IConfiguration Configuration { get; }
@@ -24,7 +25,12 @@ namespace gs
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string[] urls =new string[] { "http://www.afanti.org.cn" };
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -34,7 +40,7 @@ namespace gs
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors("AllowAll");
             app.UseMvc();
         }
     }

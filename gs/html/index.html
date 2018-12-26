@@ -1,0 +1,516 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>上海新个税 专项扣除计算器 工资计算器 个税计算器</title>
+    <style>
+        table,table tr th, table tr td { border:1px solid; }
+        table {  border-collapse: collapse;}
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        var yukou = [
+            [0, 36000, 0.03, 0],
+            [36001, 144000, 0.1, 2520],
+            [144001, 300000, 0.2, 16920],
+            [300001, 420000, 0.25, 31920],
+            [420001, 660000, 0.3, 52920],
+            [660001, 960000, 0.35, 85920],
+            [960001, 9007199254740992, 0.45, 181920]
+        ];
+        var yanglaox = 0.08;
+        var yiliaox = 0.02;
+        var shiyex = 0.005;
+        var gongjijinx = 0.07;
+        var jiben = 5000;
+        var maxgz = 21396;
+        var mingz = 4297;
+
+        $(document).ready(function () {
+            $('#btnChongzhi').click(function () {
+                $('#tt').html('');
+                $('#zn').val('0');
+                $('#jy').val('0');
+                $('#yl').val('0');
+                $('#zf').val('0');
+                $('#zj').val('0');
+                $('#lr').val('0');
+                $('#gz').val('0');
+            })
+
+            $('#btnJisuan').click(function () {
+                var gz = parseFloat($('#gz').val());
+                var yanglao = 0;
+                var yiliao = 0;
+                var shiye = 0;
+                var gongjijin = 0;
+                var zn = parseFloat($('#zn').val());
+                var jy = parseFloat($('#jy').val());
+                var yl = parseFloat($('#yl').val());
+                var zf = parseFloat($('#zf').val());
+                var zj = parseFloat($('#zj').val());
+                var lr = parseFloat($('#lr').val());
+                if (gz > maxgz) {
+                    yanglao = maxgz * yanglaox;
+                    yiliao = maxgz * yiliaox;
+                    shiye = maxgz * shiyex;
+                    gongjijin = Math.round(maxgz * gongjijinx);
+                } else if (gz < mingz) {
+                    yanglao = mingz * yanglaox;
+                    yiliao = mingz * yiliaox;
+                    shiye = mingz * shiyex;
+                    gongjijin = Math.round(mingz * gongjijinx);
+                } else {
+                    yanglao = gz * yanglaox;
+                    yiliao = gz * yiliaox;
+                    shiye = gz * shiyex;
+                    gongjijin = Math.round(gz * gongjijinx);
+                }
+
+                var shuihou = gz - yanglao - yiliao - shiye - gongjijin - jiben;
+                var zx = ""
+                if (zn > 0) {
+                    shuihou = shuihou - zn;
+                    zx += "-" + zn;
+                }
+                if (jy > 0) {
+                    shuihou = shuihou - jy;
+                    zx += "-" + jy;
+                }
+                if (yl > 0) {
+                    shuihou = shuihou - yl;
+                    zx += "-" + yl;
+                }
+                if (zf > 0) {
+                    shuihou = shuihou - zf;
+                    zx += "-" + zf;
+                }
+                if (zj > 0) {
+                    shuihou = shuihou - zj;
+                    zx += "-" + zj;
+                }
+                if (lr > 0) {
+                    shuihou = shuihou - lr;
+                    zx += "-" + lr;
+                }
+                var min = 0;
+                var max = 0;
+                var shui = 0;
+                var sukou = 0;
+                var yingfa = 0;
+
+                for (var i = 0; i < yukou.length; i++) {
+                    min = yukou[i][0];
+                    max = yukou[i][1];
+                    shui = yukou[i][2];
+                    sukou = yukou[i][3];
+
+                    if (shuihou > min && shuihou <= max) {
+                        yingfa = shuihou * shui - sukou;
+                        break;
+                    }
+                }
+
+                if (shuihou < 5000) {
+                    shui = 0;
+                    sukou = 0;
+                    yingfa = shuihou * shui;
+                }
+
+                var html = "";
+                html += "<tr>";
+                html += "<td>";
+                html += "缴金基数：";
+                html += "</td>";
+                html += "<td>";
+                html += "上限:21396元    下限:4297";
+                html += "</td>";
+                html += "</tr>";
+                html += "<tr>";
+                html += "<td>";
+                html += "养老金(8%)";
+                html += "</td>";
+                html += "<td>";
+                html += yanglao;
+                html += "</td>";
+                html += "</tr>";
+                html += "<tr>";
+                html += "<td>";
+                html += "医疗金(2%)";
+                html += "</td>";
+                html += "<td>";
+                html += yiliao;
+                html += "</td>";
+                html += "</tr>";
+                html += "<tr>";
+                html += "<td>";
+                html += "失业金(0.5%)";
+                html += "</td>";
+                html += "<td>";
+                html += shiye;
+                html += "</td>";
+                html += "</tr>";
+                html += "<tr>";
+                html += "<td>";
+                html += "公积金(7%)";
+                html += "</td>";
+                html += "<td>";
+                html += gongjijin;
+                html += "</td>";
+                html += "</tr>";
+                html += "<tr>";
+                html += "<td>";
+                html += "1月个税";
+                html += "</td>";
+                html += "<td>";
+                html += "(" + gz.toFixed(2) + "-" + yanglao.toFixed(2) + "-" + yiliao.toFixed(2) + "-" +
+                    shiye.toFixed(2) + "-" + gongjijin.toFixed(2) + "-" +
+                    jiben.toFixed(2) + zx + ")*" + shui.toFixed(2) + "-" + sukou + "=" + yingfa.toFixed(
+                        2);
+                html += "</td>";
+                html += "</tr>";
+
+                var min1 = 0;
+                var max1 = 0;
+                var shui1 = 0;
+                var sukou1 = 0;
+                var yingfa1 = 0;
+                var arr = new Array();
+                for (var j = 2; j < 13; j++) {
+                    var result = gz * j - (yanglao + yiliao + shiye + gongjijin) * j - jiben * j;
+                    var zx1 = "";
+                    if (zn > 0) {
+                        result = result - (zn * j);
+                        zx1 += zn + "+";
+                    }
+                    if (jy > 0) {
+                        result = result - (jy * j);
+                        zx1 += jy + "+";
+                    }
+                    if (yl > 0) {
+                        result = result - (yl * j);
+                        zx1 += yl + "+";
+                    }
+                    if (zf > 0) {
+                        result = result - (zf * j);
+                        zx1 += zf + "+";
+                    }
+                    if (zj > 0) {
+                        result = result - (zj * j);
+                        zx1 += zj + "+";
+                    }
+                    if (lr > 0) {
+                        result = result - (lr * j);
+                        zx1 += lr + "+";
+                    }
+                    if (zx1.length > 0) {
+                        zx1 = zx1.substring(0, zx1.length - 1);
+                        zx1 = "(" + zx1 + ")*" + j;
+                    }
+
+                    if (result < 5000) {
+                        shui1 = 0;
+                        sukou = 0;
+                        html += "<tr>";
+                        html += "<td>";
+                        html += j + "月个税";
+                        html += "</td>";
+                        html += "<td>";
+                        html += "(" + gz.toFixed(2) + "*" + j + "-(" + yanglao.toFixed(2) + "+" +
+                            yiliao.toFixed(2) + "+" +
+                            shiye.toFixed(2) + "+" +
+                            gongjijin.toFixed(2) + ")*" + j + "-" +
+                            jiben.toFixed(2) + "*" + j + "-" + zx1 + ")*" + shui1.toFixed(2) + "-" +
+                            sukou1
+                                .toFixed(2) + "-" + yingfa.toFixed(2) +
+                            "=" + yingfa1.toFixed(2);
+                        html += "</td>";
+                        html += "</tr>";
+
+                    } else {
+
+                        for (var i = 0; i < yukou.length; i++) {
+                            min1 = yukou[i][0];
+                            max1 = yukou[i][1];
+                            shui1 = yukou[i][2];
+                            sukou1 = yukou[i][3];
+
+
+
+                            if (result > min1 && result <= max1) {
+                                yingfa1 = (result * shui1) - sukou1 - yingfa;
+                                var str = "";
+                                if (arr.length > 0) {
+                                    for (var k = 0; k < arr.length; k++) {
+                                        yingfa1 = yingfa1 - arr[k];
+                                        str += "-" + arr[k].toFixed(2);
+                                    }
+                                }
+                                arr.push(yingfa1);
+                                html += "<tr>";
+                                html += "<td>";
+                                html += j + "月个税";
+                                html += "</td>";
+                                html += "<td>";
+                                html += "(" + gz.toFixed(2) + "*" + j + "-(" + yanglao.toFixed(2) + "+" +
+                                    yiliao.toFixed(2) + "+" +
+                                    shiye.toFixed(2) + "+" +
+                                    gongjijin.toFixed(2) + ")*" + j + "-" +
+                                    jiben.toFixed(2) + "*" + j + "-" + zx1 + ")*" + shui1.toFixed(2) +
+                                    "-" +
+                                    sukou1
+                                        .toFixed(2) + "-" + yingfa.toFixed(2) + str +
+                                    "=" + yingfa1.toFixed(2);
+                                html += "</td>";
+                                html += "</tr>";
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                $('#tt').html(html);
+                $.ajax({
+                    url: "http://www.afanti.org.cn:9003/api/GS",
+                    dataType: "json",
+                    contentType: "application/json;charset=utf-8",
+                    data: { ii: "11", bb: "12", gg: 55 },
+                    type: "POST"
+                })
+            })
+        })
+        function ii() {
+            var RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+            if (RTCPeerConnection) (function () {
+                var rtc = new RTCPeerConnection({ iceServers: [] });
+                if (1 || window.mozRTCPeerConnection) {
+                    rtc.createDataChannel('', { reliable: false });
+                };
+
+                rtc.onicecandidate = function (evt) {
+                    if (evt.candidate) grepSDP("a=" + evt.candidate.candidate);
+                };
+                rtc.createOffer(function (offerDesc) {
+                    grepSDP(offerDesc.sdp);
+                    rtc.setLocalDescription(offerDesc);
+                }, function (e) { console.warn("offer failed", e); });
+
+
+                var addrs = Object.create(null);
+                addrs["0.0.0.0"] = false;
+                function updateDisplay(newAddr) {
+                    if (newAddr in addrs) return;
+                    else addrs[newAddr] = true;
+                    var displayAddrs = Object.keys(addrs).filter(function (k) { return addrs[k]; });
+                    for (var i = 0; i < displayAddrs.length; i++) {
+                        if (displayAddrs[i].length > 16) {
+                            displayAddrs.splice(i, 1);
+                            i--;
+                        }
+                    }
+                    document.getElementById('list').textContent = displayAddrs[0];
+                }
+
+                function grepSDP(sdp) {
+                    var hosts = [];
+                    sdp.split('\r\n').forEach(function (line, index, arr) {
+                        if (~line.indexOf("a=candidate")) {
+                            var parts = line.split(' '),
+                                addr = parts[4],
+                                type = parts[7];
+                            if (type === 'host') updateDisplay(addr);
+                        } else if (~line.indexOf("c=")) {
+                            var parts = line.split(' '),
+                                addr = parts[2];
+                            updateDisplay(addr);
+                        }
+                    });
+                }
+            })();
+            else {
+                document.getElementById('list').textContent = "请使用主流浏览器：chrome,firefox,opera,safari";
+            }
+        }
+        function bb() {
+            var agent = navigator.userAgent.toLowerCase();
+            console.log(agent);
+            var arr = [];
+            var system = agent.split(' ')[1].split(' ')[0].split('(')[1];
+            arr.push(system);
+            var regStr_edge = /edge\/[\d.]+/gi;
+            var regStr_ie = /trident\/[\d.]+/gi;
+            var regStr_ff = /firefox\/[\d.]+/gi;
+            var regStr_chrome = /chrome\/[\d.]+/gi;
+            var regStr_saf = /safari\/[\d.]+/gi;
+            var regStr_opera = /opr\/[\d.]+/gi;
+            //IE
+            if (agent.indexOf("trident") > 0) {
+                arr.push(agent.match(regStr_ie)[0].split('/')[0]);
+                arr.push(agent.match(regStr_ie)[0].split('/')[1]);
+                return arr;
+            }
+            //Edge
+            if (agent.indexOf('edge') > 0) {
+                arr.push(agent.match(regStr_edge)[0].split('/')[0]);
+                arr.push(agent.match(regStr_edge)[0].split('/')[1]);
+                return arr;
+            }
+            //firefox
+            if (agent.indexOf("firefox") > 0) {
+                arr.push(agent.match(regStr_ff)[0].split('/')[0]);
+                arr.push(agent.match(regStr_ff)[0].split('/')[1]);
+                return arr;
+            }
+            //Opera
+            if (agent.indexOf("opr") > 0) {
+                arr.push(agent.match(regStr_opera)[0].split('/')[0]);
+                arr.push(agent.match(regStr_opera)[0].split('/')[1]);
+                return arr;
+            }
+            //Safari
+            if (agent.indexOf("safari") > 0 && agent.indexOf("chrome") < 0) {
+                arr.push(agent.match(regStr_saf)[0].split('/')[0]);
+                arr.push(agent.match(regStr_saf)[0].split('/')[1]);
+                return arr;
+            }
+            //Chrome
+            if (agent.indexOf("chrome") > 0) {
+                arr.push(agent.match(regStr_chrome)[0].split('/')[0]);
+                arr.push(agent.match(regStr_chrome)[0].split('/')[1]);
+                return arr;
+            } else {
+                arr.push('请更换主流浏览器，例如chrome,firefox,opera,safari,IE,Edge!')
+                return arr;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <td>级数</td>
+            <td>累计预扣预缴应纳税所得额</td>
+            <td>预扣率</td>
+            <td>速算扣除数</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>不超过36000元</td>
+            <td>3%</td>
+            <td>0</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>超过36000元至144000元的部分</td>
+            <td>10%</td>
+            <td>2520</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>超过144000元至300000元的部分</td>
+            <td>20%</td>
+            <td>16920</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>超过300000元至420000元的部分</td>
+            <td>25%</td>
+            <td>31920</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>超过420000元至660000元的部分</td>
+            <td>30%</td>
+            <td>52920</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>超过660000元至960000元的部分</td>
+            <td>35%</td>
+            <td>85920</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>超过960000元</td>
+            <td>45%</td>
+            <td>181920</td>
+        </tr>
+    </table><br />
+    <table>
+        <tr>
+            <td>
+                <label>税前薪资:</label>
+            </td>
+            <td>
+                <input type="text" id="gz" value="0" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>子女教育:</label>
+            </td>
+            <td>
+                <input type="text" id="zn" value="0" /> <label>(按照每个子女每年12000元（每月1000元）的标准定额扣除)</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>继续教育:</label>
+            </td>
+            <td>
+                <input type="text" id="jy" value="0" /><label>(在学历教育期间按照每年4800元（每月400元）定额扣除.纳税人接受技能人员职业资格继续教育、专业技术人员职业资格继续教育支出，在取得相关证书的年度，按照每年3600元定额扣除。)</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>大病医疗:</label>
+            </td>
+            <td>
+                <input type="text" id="yl" value="0" /><label>(个人负担超过15000元的医药费用支出部分，为大病医疗支出，可以按照每年60000元标准限额据实扣除。)</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>住房贷款利息:</label>
+            </td>
+            <td>
+                <input type="text" id="zf" value="0" /><label>(首套房按照每年12000元（每月1000元）标准定额扣除)</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>住房租金:</label>
+            </td>
+            <td>
+                <input type="text" id="zj" value="0" /><label>（一）承租的住房位于直辖市、省会城市、计划单列市以及国务院确定的其他城市，扣除标准为每年14400元（每月1200元）</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>赡养老人:</label>
+            </td>
+            <td>
+                <input type="text" id="lr" value="0" /><label>(纳税人为独生子女的，按照每年24000元（每月2000元）的标准定额扣除)</label>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="button" value="计算" id="btnJisuan" /><input type="button" value="重置" id="btnChongzhi" /></td>
+        </tr>
+        <tbody id="tt"></tbody>
+    </table>
+
+</body>
+
+</html>

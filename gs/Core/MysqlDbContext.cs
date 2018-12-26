@@ -11,7 +11,7 @@ namespace gs.Core
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySQL("server=www.afanti.org.cn;port=3306;database=logs;uid=root;pwd=1qazxsw2;");
+            optionsBuilder.UseMySQL("server=xxxxx;port=3306;database=logs;uid=xxxx;pwd=xxxx;");
         }
         public virtual DbSet<lg> LG { get; set; }
     }
